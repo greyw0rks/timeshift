@@ -7,6 +7,9 @@ TIMESHIFT lets you sell a savings lock while its funds remain locked. Deposit 10
 **Track** · Unstoppable DeFi  
 **Other entry** · [Greed Machine](https://github.com/greyw0rks/greed-machine)
 
+**Live demo** · [TIMESHIFT](https://greyw0rks.github.io/timeshift/)  
+**Public source** · [GitHub](https://github.com/greyw0rks/timeshift)
+
 ## Demo sequence
 
 | Screen | Narration |

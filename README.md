@@ -4,6 +4,8 @@ Lock 100 TUSD until a fixed date. If you need liquidity before maturity, list th
 
 TIMESHIFT is a NEAR testnet MVP for the Unstoppable DeFi track. The other independent entry is [Greed Machine](https://github.com/greyw0rks/greed-machine). TIMESHIFT has no AI features.
 
+**Live testnet app** · [Open TIMESHIFT](https://greyw0rks.github.io/timeshift/)
+
 ## Run the app
 
 Use Node 22.12 or newer.
