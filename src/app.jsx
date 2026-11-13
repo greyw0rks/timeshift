@@ -231,21 +231,21 @@ function App() {
       {route === "/" && <div className="landing">
         <section className="hero" aria-labelledby="hero-heading">
           <div className="hero-copy">
-            <p className="eyebrow"><i /> BUILT ON NEAR TESTNET</p>
-            <h1 id="hero-heading">Sell the lock.<br /><em>Keep the funds locked.</em></h1>
-            <p>Turn a fixed-term savings lock into something you can sell. A buyer pays you today and redeems the funds when the lock matures.</p>
-            <div className="actions"><a className="button primary" href="#/marketplace">Explore marketplace <span aria-hidden="true">↗</span></a><a className="button" href="#/lock">Create a lock</a></div>
+            <p className="eyebrow"><i /> AN EXPERIMENT IN LOCKED TIME</p>
+            <h1 id="hero-heading">Time under <em>glass.</em></h1>
+            <p>Lock your funds until a date you choose. If you need them sooner, sell the right to collect them to someone who can wait.</p>
+            <div className="actions"><a className="button primary" href="#/marketplace">Browse locks <span aria-hidden="true">↗</span></a><a className="button" href="#/lock">Create a lock</a></div>
           </div>
           <div className="art">
             <div className="art-grid" />
             <div className="fallback" aria-hidden="true" />
             <Suspense fallback={null}><VaultScene reduced={reduced} /></Suspense>
             <span className="art-label">THE TIME VAULT</span>
-            <div className="art-caption"><span>ESCROWED PAYOUT</span><strong>100 TUSD</strong></div>
+            <div className="art-caption"><span>EXAMPLE LOCK</span><strong>100 TUSD</strong></div>
           </div>
         </section>
         <section className="how" aria-labelledby="how-heading">
-          <div className="section-head"><h2 id="how-heading">How it works</h2><span className="mono muted">Example trade · TUSD</span></div>
+          <div className="section-head"><h2 id="how-heading">A lock changes hands</h2><span className="mono muted">Example trade · TUSD</span></div>
           <div className="steps">
             <article><h3>Lock</h3><strong>100 <small>TUSD</small></strong><p>Deposit funds and choose when they unlock. Your Lock NFT gives you the right to redeem them.</p></article>
             <article><h3>Sell</h3><strong>92 <small>TUSD</small></strong><p>Set an asking price. When someone buys, you can withdraw the sale proceeds.</p></article>
@@ -253,7 +253,7 @@ function App() {
           </div>
         </section>
         <section className="proof" aria-labelledby="proof-heading">
-          <div><h2 id="proof-heading">See a settled lock</h2><p>Two testnet wallets completed this trade. Open the lock to see its final owner and redemption status.</p></div>
+          <div><h2 id="proof-heading">From the archive</h2><p>Two testnet wallets completed this trade. Open the lock to see its final owner and redemption status.</p></div>
           <a className="button" href={configured && vault === "timeshift-vault-261113.testnet" ? "#/lock/2" : "https://testnet.nearblocks.io/txns/jVBGmsSwrJHn3ncbcqi5vJcJ8rZoDcY1giqty2VHxNw"}>View Lock #2 <span aria-hidden="true">↗</span></a>
         </section>
       </div>}
