@@ -1,4 +1,4 @@
-name: Deploy TIMESHIFT
+name: Deploy Lockpad
 on:
   push:
     branches: [main]

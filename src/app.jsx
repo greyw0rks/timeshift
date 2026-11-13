@@ -12,7 +12,7 @@ const preview = [1000, 2500, 500].map((amount, index) => ({
   lock: { amount: String(amount * 1000000), status: "Active", unlock_at: String(BigInt(demoNow + [30, 60, 7][index] * DAY) * 1000000n) },
   listing: { price: String([920, 2375, 485][index] * 1000000) },
 }));
-const routes = [["/", "Overview"], ["/marketplace", "Marketplace"], ["/lock", "Create lock"], ["/portfolio", "Portfolio"]];
+const routes = [["/", "Home"], ["/marketplace", "Marketplace"], ["/lock", "Create lock"], ["/portfolio", "Portfolio"]];
 const unlockTime = ({ lock }) => Number(BigInt(lock.unlock_at) / 1000000n);
 const durationLabel = (ms) => ms <= 0 ? "Matured" : ms >= DAY ? Math.ceil(ms / DAY) + " days" : Math.ceil(ms / 1000) + " sec";
 const discount = (amount, price) => (Number((BigInt(amount) - BigInt(price)) * 10000n / BigInt(amount)) / 100).toFixed(2);
@@ -215,7 +215,7 @@ function App() {
   }
 
   return <div className="shell">
-    <header><a className="wordmark" href="#/"><span>◈</span> TIMESHIFT</a>
+    <header><a className="wordmark" href="#/"><span>◈</span> Lockpad</a>
       <nav aria-label="Main navigation">{routes.map(([href, label]) => <a key={href} href={"#" + href} aria-current={route === href ? "page" : undefined}>{label}</a>)}</nav>
       {configured ? account ? <button className="wallet" onClick={async () => {
         try { await (await connector()).disconnect(); setAccount(""); }
@@ -228,18 +228,36 @@ function App() {
         <span>{notice.message}</span>{notice.receipt && <a href={notice.receipt} target="_blank" rel="noreferrer">Receipt ↗</a>}<button aria-label="Dismiss" onClick={() => setNotice(null)}>×</button>
       </motion.aside>}
       <motion.div key={route} initial={reduced ? false : { opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: .4 }}>
-      {route === "/" && <>
-        <section className="hero"><div className="hero-copy"><p className="eyebrow"><i /> NEAR TESTNET · TRADABLE LOCKS</p>
-          <h1>Trade your<br /><em>locked funds.</em></h1><p>Lock your tokens until a fixed date. If you need cash sooner, sell the right to redeem them to a buyer at a discount.</p>
-          <div className="actions"><a className="button primary" href="#/marketplace">Explore marketplace <span>↗</span></a><a className="button" href="#/lock">Create a lock</a></div></div>
-          <div className="art"><div className="art-grid" /><div className="fallback" aria-hidden="true"><span /></div><Suspense fallback={null}><VaultScene reduced={reduced} /></Suspense>
-            <span className="art-label">THE TIME VAULT</span><span className="art-caption">Fixed maturity · Transferable ownership</span></div></section>
-        <section><div className="section-head"><div><p className="eyebrow">MARKETPLACE</p><h2>Available locks</h2></div><a href="#/marketplace">View marketplace ↗</a></div>
-          {!configured && <p className="muted">Sample positions for preview.</p>}
-          <div className="cards">{sorted.slice(0, 3).map(item => card(item, true))}</div>
-          {configured && !active.length && <p className="empty">No available locks on this page.</p>}
-        </section></>}
-      {route === "/marketplace" && <section><p className="eyebrow">TIMESHIFT MARKET</p><div className="section-head"><h1 className="title">Marketplace</h1>
+      {route === "/" && <div className="landing">
+        <section className="hero" aria-labelledby="hero-heading">
+          <div className="hero-copy">
+            <p className="eyebrow"><i /> BUILT ON NEAR TESTNET</p>
+            <h1 id="hero-heading">Sell the lock.<br /><em>Keep the funds locked.</em></h1>
+            <p>Turn a fixed-term savings lock into something you can sell. A buyer pays you today and redeems the funds when the lock matures.</p>
+            <div className="actions"><a className="button primary" href="#/marketplace">Explore marketplace <span aria-hidden="true">↗</span></a><a className="button" href="#/lock">Create a lock</a></div>
+          </div>
+          <div className="art">
+            <div className="art-grid" />
+            <div className="fallback" aria-hidden="true" />
+            <Suspense fallback={null}><VaultScene reduced={reduced} /></Suspense>
+            <span className="art-label">THE TIME VAULT</span>
+            <div className="art-caption"><span>ESCROWED PAYOUT</span><strong>100 TUSD</strong></div>
+          </div>
+        </section>
+        <section className="how" aria-labelledby="how-heading">
+          <div className="section-head"><h2 id="how-heading">How it works</h2><span className="mono muted">Example trade · TUSD</span></div>
+          <div className="steps">
+            <article><h3>Lock</h3><strong>100 <small>TUSD</small></strong><p>Deposit funds and choose when they unlock. Your Lock NFT gives you the right to redeem them.</p></article>
+            <article><h3>Sell</h3><strong>92 <small>TUSD</small></strong><p>Set an asking price. When someone buys, you can withdraw the sale proceeds.</p></article>
+            <article><h3>Redeem</h3><strong>100 <small>TUSD</small></strong><p>At maturity, the current owner redeems the full amount from escrow.</p></article>
+          </div>
+        </section>
+        <section className="proof" aria-labelledby="proof-heading">
+          <div><h2 id="proof-heading">See a settled lock</h2><p>Two testnet wallets completed this trade. Open the lock to see its final owner and redemption status.</p></div>
+          <a className="button" href={configured && vault === "timeshift-vault-261113.testnet" ? "#/lock/2" : "https://testnet.nearblocks.io/txns/jVBGmsSwrJHn3ncbcqi5vJcJ8rZoDcY1giqty2VHxNw"}>View Lock #2 <span aria-hidden="true">↗</span></a>
+        </section>
+      </div>}
+      {route === "/marketplace" && <section><div className="section-head"><h1 className="title">Marketplace</h1>
         <label className="sort">Sort by <select value={sort} onChange={event => setSort(event.target.value)}><option value="maturity">Soonest maturity</option><option value="discount">Largest discount</option></select></label></div>
         <p className="muted">{configured ? "Buy a lock and redeem the full payout at maturity." : "Sample listings for preview. Connect a testnet deployment to trade."}</p>
         <div className="cards">{sorted.map(item => card(item, true))}</div>
@@ -277,7 +295,7 @@ function App() {
       </section>}
       </motion.div>
     </main>
-    <footer><span>TIMESHIFT</span><span>NEAR testnet · TUSD has no monetary value</span></footer>
+    <footer><span>Lockpad</span><span>NEAR testnet · TUSD has no monetary value</span></footer>
     <AnimatePresence>{confirm && <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="overlay">
       <section className="panel modal" role="dialog" aria-modal="true" aria-labelledby="buy-heading" onKeyDown={event => { if (event.key === "Escape" && !busy) setConfirm(null); }}>
         <h2 id="buy-heading">Buy Lock #{confirm.item.id}?</h2>

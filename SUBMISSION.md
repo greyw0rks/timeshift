@@ -1,13 +1,13 @@
-# TIMESHIFT submission kit
+# Lockpad submission kit
 
 ## Project description
 
-TIMESHIFT lets you sell a savings lock while its funds remain locked. Deposit 100 TUSD, list the Lock NFT for 92 TUSD, and a buyer can take over the right to redeem the 100 at maturity. NEAR holds the deposit, changes ownership, and enforces the unlock date. The seller can withdraw the purchase price after the sale.
+Lockpad lets you sell a savings lock while its funds remain locked. Deposit 100 TUSD, list the Lock NFT for 92 TUSD, and a buyer can take over the right to redeem the 100 at maturity. NEAR holds the deposit, changes ownership, and enforces the unlock date. The seller can withdraw the purchase price after the sale.
 
 **Track** · Unstoppable DeFi  
 **Other entry** · [Greed Machine](https://github.com/greyw0rks/greed-machine)
 
-**Live demo** · [TIMESHIFT](https://greyw0rks.github.io/timeshift/)  
+**Live demo** · [Lockpad](https://greyw0rks.github.io/timeshift/)  
 **Public source** · [GitHub](https://github.com/greyw0rks/timeshift)
 
 ## Demo sequence
@@ -23,7 +23,7 @@ TIMESHIFT lets you sell a savings lock while its funds remain locked. Deposit 10
 
 ## Draft X post
 
-I built TIMESHIFT at the NEAR Hackathon. Lock 100 test tokens, sell the lock for 92, and let the buyer redeem the full 100 at maturity. The funds stay locked when ownership changes.
+I built Lockpad at the NEAR Hackathon. Lock 100 test tokens, sell the lock for 92, and let the buyer redeem the full 100 at maturity. The funds stay locked when ownership changes.
 
 @NEARProtocol #NEARHackathon
 

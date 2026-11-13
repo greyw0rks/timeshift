@@ -1,10 +1,10 @@
-# TIMESHIFT · Tradable Locks
+# Lockpad · Tradable Locks
 
 Lock 100 TUSD until a fixed date. If you need liquidity before maturity, list the Lock NFT for 92 TUSD. A buyer pays the asking price, the seller can withdraw 92 TUSD, and the buyer can redeem the 100 TUSD at maturity. The locked 100 stays in escrow throughout the sale.
 
-TIMESHIFT is a NEAR testnet MVP for the Unstoppable DeFi track. The other independent entry is [Greed Machine](https://github.com/greyw0rks/greed-machine). TIMESHIFT has no AI features.
+Lockpad is a NEAR testnet MVP for the Unstoppable DeFi track. The other independent entry is [Greed Machine](https://github.com/greyw0rks/greed-machine). Lockpad has no AI features.
 
-**Live testnet app** · [Open TIMESHIFT](https://greyw0rks.github.io/timeshift/)
+**Live testnet app** · [Open Lockpad](https://greyw0rks.github.io/timeshift/)
 
 ## Run the app
 
@@ -77,6 +77,6 @@ For a fresh testnet deployment, set `TIMESHIFT_TESTNET_KEYS` to an absolute priv
 
 ## Hackathon scope
 
-Discounted fixed-maturity instruments are established. TIMESHIFT's narrower product idea is making a user's own fixed-term savings lock transferable, then demonstrating an early exit and maturity payout through one market. Savings discipline supplies a reason to lock. Without buyer demand, the owner waits to maturity.
+Discounted fixed-maturity instruments are established. Lockpad's narrower product idea is making a user's own fixed-term savings lock transferable, then demonstrating an early exit and maturity payout through one market. Savings discipline supplies a reason to lock. Without buyer demand, the owner waits to maturity.
 
 The MVP supports one asset, fixed prices, and 1-minute, 7-day, 30-day and 90-day lock terms. The deployed accounts retain upgrade keys. The contracts are testnet prototypes and have not been audited. Before handling value, review upgrade control, callback failure recovery beyond ordinary FT transfer failures, storage pricing and the economics of listing liquidity.
