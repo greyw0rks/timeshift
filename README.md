@@ -1,59 +1,14 @@
-# Lockpad · Tradable Locks
+# Lockpad · NEAR DeFi Resale
 
-Lock 100 TUSD until a fixed date. If you need liquidity before maturity, list the Lock NFT for 92 TUSD. A buyer pays the asking price, the seller can withdraw 92 TUSD, and the buyer can redeem the 100 TUSD at maturity. The locked 100 stays in escrow throughout the sale.
+[Open Lockpad](https://greyw0rks.github.io/timeshift/)
 
-Lockpad is a NEAR testnet MVP for the Unstoppable DeFi track. The other independent entry is [Greed Machine](https://github.com/greyw0rks/greed-machine). Lockpad has no AI features.
+Lockpad is a secondary marketplace for existing positions issued by other NEAR DeFi protocols. The public app shows position eligibility and currently has no verified external listings or enabled trade flow.
 
-**Live testnet app** · [Open Lockpad](https://greyw0rks.github.io/timeshift/)
+Shardpad documents creator fee reassignment. That right is separate from locked principal. The Rhea position NFT can move when its owner authorizes the transfer, subject to the rules of any locker that holds it. The first integration must verify the specific payout right, seller authority, transfer finality, and payment recovery on failure.
 
-## Run the app
+Run the public app with Node 22.12 or newer and `npm ci && npm run dev`.
 
-Use Node 22.12 or newer.
-
-```sh
-npm ci
-npm run dev
-```
-
-The app defaults to the public NEAR testnet deployment. For a read-only walkthrough with sample listings, start with `VITE_PREVIEW=1 npm run dev`. To point at your own deployment, copy `.env.example` to `.env.local` and set both contract accounts. For static hosting, run `npm run build` and serve `dist/`.
-
-| NEAR testnet contract | Account |
-| --- | --- |
-| Vault, marketplace and Lock NFT | [timeshift-vault-261113.testnet](https://testnet.nearblocks.io/address/timeshift-vault-261113.testnet) |
-| NEP-141 demo token and faucet | [timeshift-tusd-261113.testnet](https://testnet.nearblocks.io/address/timeshift-tusd-261113.testnet) |
-
-TUSD is a six-decimal test token with an uncapped faucet and no monetary value. Browser users need a funded testnet account for gas, FT registration and lock/listing storage.
-
-## Two-wallet demo
-
-1. Connect two testnet wallets using separate browser profiles. In each profile, open **My Locks** and click **Get test tokens**.
-2. Wallet A creates a 100 TUSD lock using **1 minute (testnet demo)**, opens its Lock NFT from Portfolio and lists it for 92 TUSD.
-3. Wallet B opens the same lock by URL or through the marketplace and buys before maturity. Show the purchase receipt and the new owner on the detail page.
-4. Wallet A withdraws the 92 TUSD in My Locks. Once the countdown ends, Wallet B opens the lock and redeems 100 TUSD. Show the redemption receipt.
-5. For a recording, rehearse the signing sequence and keep both browser profiles ready. The 60-second clock starts at the deposit receipt. Cut the recording between buy and redeem if needed.
-
-An 8 TUSD discount is 8% of the locked payout and an 8.69% holding-period gain on a 92 TUSD purchase, rounded down by the UI. The buyer's gain comes from the price paid by the seller for early liquidity. An early sale requires a buyer.
-
-## Public testnet proof
-
-Lock #2 was created by `timeshift-seller-261113.testnet` and purchased and redeemed by `timeshift-buyer-261113.testnet`.
-
-| Step | NEAR receipt |
-| --- | --- |
-| Deposit 100 TUSD and mint | [Create Lock #2](https://testnet.nearblocks.io/txns/EEKBtYADgXfYU3ndNUsi9sGP2ukzXFX11YEZAdfX873Z) |
-| List for 92 TUSD | [List](https://testnet.nearblocks.io/txns/FEnAToX6pNKpBrtCczfHLpKQ7aTi37e6NzQ9pTavjs1J) |
-| Reject and refund an underpayment | [Refund](https://testnet.nearblocks.io/txns/A775umJa37AeFL5zXUdeNSpzbFLH2VS6AA5QdSTxsrDA) |
-| Purchase for 92 TUSD | [Buy](https://testnet.nearblocks.io/txns/2JNGFi7vb33CW4iSsB5UbbwXEkgGsABwC5BNkeHKoio4) |
-| Seller withdraws 92 TUSD | [Withdraw](https://testnet.nearblocks.io/txns/25DHXxsU1hPv228riUw5hLvSmETTs2VWHMtcVYvDvEkJ) |
-| Buyer redeems 100 TUSD | [Redeem](https://testnet.nearblocks.io/txns/jVBGmsSwrJHn3ncbcqi5vJcJ8rZoDcY1giqty2VHxNw) |
-
-## Contract architecture
-
-- A single Rust vault holds one allowlisted NEP-141 token, the NEP-171 ownership ledger and fixed-price listings. Minting occurs inside an authenticated `ft_on_transfer` callback. Lock amount and maturity are immutable.
-- During a purchase callback the vault verifies the listing nonce, exact integer amount and maturity. It transfers NFT ownership, clears the listing and credits the seller in the same receipt. NEP-141 resolves rejected deposits or bids. Direct NFT transfers invalidate listings.
-- Redemption puts the lock in `Paying` before scheduling the FT transfer. A private callback records the result. A failed transfer restores the lock to `Active`. A successful transfer leaves a consumed NFT receipt in the owner's portfolio. Seller withdrawals debit the available balance before dispatch and restore it on failure.
-- Lock minting consumes a prepaid 0.03 testnet NEAR storage credit. Listing costs 0.03 testnet NEAR each time, including relisting. Those charges are fixed and retained for storage. No marketplace fee is taken from TUSD settlement. Direct token transfers to the vault outside `ft_transfer_call` create no lock or credit.
-- The web app reads NEAR RPC and signs with NEAR Connect. Vite, React, Three.js and Motion render the interface without a separate application server. The Time Vault scene loads on demand and has a CSS fallback. The portfolio displays up to 100 positions and market sorting applies to the current page.
+The repository retains the original self-issued lock vault and its scripts as a testnet settlement prototype. Its testnet receipts demonstrate purchase and redemption of that vault's own claim.
 
 ## Rebuild and test
 

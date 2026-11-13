@@ -182,3 +182,11 @@ header .button, .wallet { min-height: 39px; }
   .header-actions { flex-wrap: wrap; }
   .hero .art { height: 260px; }
 }
+.protocol-cards { grid-template-columns: repeat(2,minmax(0,1fr)); }
+.protocol-cards h3, .protocol-cards p { margin: 0; }
+.protocol-cards p { line-height: 1.55; }
+.protocol-cards a { text-decoration: underline; text-underline-offset: 3px; }
+.protocol-cards .row { flex-wrap: wrap; }
+.protocol-cards .position:hover { background: var(--paper); }
+.home .hero h1 { font-size: clamp(51px,6.3vw,96px); max-width: 11ch; }
+@media (max-width: 550px) { .protocol-cards { grid-template-columns: 1fr; } }
