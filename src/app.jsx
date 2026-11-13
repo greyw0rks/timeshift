@@ -12,7 +12,7 @@ const preview = [1000, 2500, 500].map((amount, index) => ({
   lock: { amount: String(amount * 1000000), status: "Active", unlock_at: String(BigInt(demoNow + [30, 60, 7][index] * DAY) * 1000000n) },
   listing: { price: String([920, 2375, 485][index] * 1000000) },
 }));
-const routes = [["/", "Home"], ["/marketplace", "Marketplace"], ["/lock", "Create lock"], ["/portfolio", "Portfolio"]];
+const routes = [["/", "Home"], ["/marketplace", "Explore"], ["/portfolio", "My Locks"], ["/activity", "Activity"]];
 const unlockTime = ({ lock }) => Number(BigInt(lock.unlock_at) / 1000000n);
 const durationLabel = (ms) => ms <= 0 ? "Matured" : ms >= DAY ? Math.ceil(ms / DAY) + " days" : Math.ceil(ms / 1000) + " sec";
 const discount = (amount, price) => (Number((BigInt(amount) - BigInt(price)) * 10000n / BigInt(amount)) / 100).toFixed(2);
@@ -42,7 +42,7 @@ function App() {
   const detailId = route.match(/^\/lock\/(\d+)$/)?.[1];
 
   useEffect(() => {
-    const change = () => { setRoute(location.hash.slice(1) || "/"); window.scrollTo(0, 0); };
+    const change = () => { const next = location.hash.slice(1) || "/"; if (next === "/") setOffset(0); setRoute(next); window.scrollTo(0, 0); };
     const timer = setInterval(() => setNow(Date.now()), 1000);
     addEventListener("hashchange", change);
     return () => { clearInterval(timer); removeEventListener("hashchange", change); };
@@ -149,8 +149,8 @@ function App() {
     event.preventDefault();
     try {
       const deposit = units(amount);
-      if (BigInt(deposit) > BigInt(owns.balance)) throw new Error("Insufficient TUSD. Use the test token faucet in Portfolio.");
-      transact("Lock created. Find your Lock NFT in Portfolio.", async (send) => {
+      if (BigInt(deposit) > BigInt(owns.balance)) throw new Error("Insufficient TUSD. Use the test token faucet in My Locks.");
+      transact("Lock created. Find your Lock NFT in My Locks.", async (send) => {
         const credits = await view(vault, "lock_credits", { owner: account });
         if (!credits) await send(vault, call("prepay_lock", {}, storage));
         await send(asset, funding(deposit, { action: "lock", duration }));
@@ -164,17 +164,20 @@ function App() {
   const sorted = [...active].sort((a, b) => sort === "discount"
     ? Number(discount(b.lock.amount, b.listing.price)) - Number(discount(a.lock.amount, a.listing.price))
     : unlockTime(a) - unlockTime(b));
+  const topDeals = [...active].sort((a, b) => Number(discount(b.lock.amount, b.listing.price)) - Number(discount(a.lock.amount, a.listing.price))).slice(0, 3);
   const owns = portfolio.owner === account ? portfolio : { items: [], balance: "0", proceeds: "0" };
 
   function card(item, marketplace = false) {
     const { lock, listing, id } = item;
     return <motion.a layout={!reduced} whileHover={reduced ? undefined : { y: -4 }} className="position" key={id} href={"#/lock/" + id}>
-      <div className="row"><span className="lock-icon">◈</span><span className="chip">{lock.status === "Active" ? durationLabel(unlockTime(item) - now) : lock.status}</span></div>
-      <span className="muted mono">LOCK #{id}</span>
+      <div className="row"><span className="lock-icon" aria-hidden="true">◈</span>
+        <span className="chip">{!configured ? "Sample lock" : lock.status === "Redeemed" ? "Redeemed" : lock.status === "Paying" ? "Settling" : unlockTime(item) <= now ? "Ready to redeem" : "Transferable"}</span></div>
+      <span className="muted mono">LOCKPAD VAULT · #{id}</span>
       <strong>{format(lock.amount)} <small>TUSD</small></strong>
+      <span className="muted">Locked payout · {new Date(unlockTime(item)).toLocaleDateString(undefined, { dateStyle: "medium" })}</span>
       <div className="row card-foot">
-        <span>{listing ? <><span className="muted">{marketplace ? "Buy for " : "Listed at "}</span>{format(listing.price)} TUSD</> : <span className="muted">View position</span>}</span>
-        {listing && <span className="amber">{discount(lock.amount, listing.price)}% off</span>}
+        <span>{listing && unlockTime(item) > now ? <><span className="muted">{marketplace ? "Buy for " : "Listed at "}</span>{format(listing.price)} TUSD</> : <span className="muted">View position</span>}</span>
+        {listing && unlockTime(item) > now && <span className="amber">{discount(lock.amount, listing.price)}% off</span>}
       </div>
     </motion.a>;
   }
@@ -214,13 +217,14 @@ function App() {
     </div>;
   }
 
-  return <div className="shell">
-    <header><a className="wordmark" href="#/"><span>◈</span> Lockpad</a>
+  return <div className={"shell" + (route === "/" ? " home" : "")}>
+    <header><a className="wordmark" href="#/"><span>◈</span> lockpad.</a>
       <nav aria-label="Main navigation">{routes.map(([href, label]) => <a key={href} href={"#" + href} aria-current={route === href ? "page" : undefined}>{label}</a>)}</nav>
+      <div className="header-actions"><a className="button list-action" href="#/portfolio">List position</a>
       {configured ? account ? <button className="wallet" onClick={async () => {
         try { await (await connector()).disconnect(); setAccount(""); }
         catch (error) { setNotice({ type: "error", message: error.message }); }
-      }} title="Disconnect wallet">{account}</button> : <button className="wallet" onClick={connect}>Connect wallet</button> : <span className="chip network">Preview mode</span>}
+      }} title="Disconnect wallet">{account}</button> : <button className="wallet" onClick={connect}>Connect wallet</button> : <span className="chip network">Preview mode</span>}</div>
     </header>
     <main>
       {market.error && <p className="banner error" role="alert">{market.error}</p>}
@@ -231,18 +235,23 @@ function App() {
       {route === "/" && <div className="landing">
         <section className="hero" aria-labelledby="hero-heading">
           <div className="hero-copy">
-            <p className="eyebrow"><i /> AN EXPERIMENT IN LOCKED TIME</p>
-            <h1 id="hero-heading">Time under <em>glass.</em></h1>
-            <p>Lock your funds until a date you choose. If you need them sooner, sell the right to collect them to someone who can wait.</p>
-            <div className="actions"><a className="button primary" href="#/marketplace">Browse locks <span aria-hidden="true">↗</span></a><a className="button" href="#/lock">Create a lock</a></div>
+            <p className="eyebrow"><i /> THE MARKETPLACE FOR LOCKED LIQUIDITY</p>
+            <h1 id="hero-heading">Trade your <em>locked assets.</em></h1>
+            <p>Discover, buy and sell fully funded Lockpad positions on NEAR testnet.</p>
+            <div className="actions"><a className="button primary" href="#/marketplace">Explore locks <span aria-hidden="true">↗</span></a><a className="button" href="#/lock">Create a lock</a></div>
           </div>
           <div className="art">
             <div className="art-grid" />
             <div className="fallback" aria-hidden="true" />
             <Suspense fallback={null}><VaultScene reduced={reduced} /></Suspense>
             <span className="art-label">THE TIME VAULT</span>
-            <div className="art-caption"><span>EXAMPLE LOCK</span><strong>100 TUSD</strong></div>
+
           </div>
+        </section>
+        <section className="deals" aria-labelledby="deals-heading">
+          <div className="section-head"><h2 id="deals-heading">Top deals</h2><a href="#/marketplace">View all ↗</a></div>
+          {topDeals.length ? <div className="cards">{topDeals.map(item => card(item, true))}</div> :
+            <p className="empty">{market.verified ? "No active listings on this page." : market.error ? "Listings unavailable." : "Loading listings…"}</p>}
         </section>
         <section className="how" aria-labelledby="how-heading">
           <div className="section-head"><h2 id="how-heading">A lock changes hands</h2><span className="mono muted">Example trade · TUSD</span></div>
@@ -253,7 +262,7 @@ function App() {
           </div>
         </section>
         <section className="proof" aria-labelledby="proof-heading">
-          <div><h2 id="proof-heading">From the archive</h2><p>Two testnet wallets completed this trade. Open the lock to see its final owner and redemption status.</p></div>
+          <div><h2 id="proof-heading">A completed trade</h2><p>Two testnet wallets completed this trade. Open the lock to see its final owner and redemption status.</p></div>
           <a className="button" href={configured && vault === "timeshift-vault-261113.testnet" ? "#/lock/2" : "https://testnet.nearblocks.io/txns/jVBGmsSwrJHn3ncbcqi5vJcJ8rZoDcY1giqty2VHxNw"}>View Lock #2 <span aria-hidden="true">↗</span></a>
         </section>
       </div>}
@@ -263,6 +272,15 @@ function App() {
         <div className="cards">{sorted.map(item => card(item, true))}</div>
         {!sorted.length && <p className="empty">No available locks on this page.</p>}
         {configured && <div className="actions"><button disabled={!offset} onClick={() => setOffset(Math.max(0, offset - 12))}>Previous</button><button disabled={market.items.length < 13} onClick={() => setOffset(offset + 12)}>Next</button></div>}
+      </section>}
+      {route === "/activity" && <section className="narrow">
+        <h1 className="title">Activity</h1>
+        <p className="muted">Verified testnet receipts from the sale and redemption of Lock #2.</p>
+        <div className="panel activity">
+          <a href="https://testnet.nearblocks.io/txns/2JNGFi7vb33CW4iSsB5UbbwXEkgGsABwC5BNkeHKoio4">Purchased for 92 TUSD <span>↗</span></a>
+          <a href="https://testnet.nearblocks.io/txns/25DHXxsU1hPv228riUw5hLvSmETTs2VWHMtcVYvDvEkJ">Seller withdrew 92 TUSD <span>↗</span></a>
+          <a href="https://testnet.nearblocks.io/txns/jVBGmsSwrJHn3ncbcqi5vJcJ8rZoDcY1giqty2VHxNw">Buyer redeemed 100 TUSD <span>↗</span></a>
+        </div>
       </section>}
       {route === "/lock" && <section className="narrow"><p className="eyebrow">CREATE POSITION</p><h1 className="title">Create a lock</h1>
         <p className="muted">Choose an amount and a duration. The funds stay in escrow until the unlock date. You can sell the NFT before then.</p>
@@ -276,7 +294,7 @@ function App() {
           <button className="primary" disabled={!accountReady}>Lock funds</button>
         </form>
       </section>}
-      {route === "/portfolio" && <section><p className="eyebrow">YOUR POSITIONS</p><h1 className="title">Portfolio</h1>
+      {route === "/portfolio" && <section><p className="eyebrow">YOUR POSITIONS</p><h1 className="title">My Locks</h1><p className="muted">Open an active lock to list it for sale.</p>
         {owns.error && <p className="banner error" role="alert">{owns.error}</p>}
         {!account ? <p className="empty">{configured ? "Connect a testnet wallet to view your locks." : "Configure a testnet deployment to connect a wallet."}</p> : <>
           <div className="facts"><div><span>Wallet balance</span><strong>{format(owns.balance)} TUSD</strong><button disabled={!accountReady} onClick={() => transact("Test tokens received.", async send => { await register(send); await send(asset, call("faucet", {}, "0")); })}>Get test tokens</button></div>

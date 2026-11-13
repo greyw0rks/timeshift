@@ -17,8 +17,8 @@ export default function VaultScene({ reduced }) {
     const vault = new THREE.Group();
     vault.rotation.z = -.24;
     scene.add(vault);
-    const cyan = new THREE.MeshBasicMaterial({color: 0x174f55});
-    const glass = new THREE.MeshBasicMaterial({color: 0x1b6870, transparent: true, opacity: .32, wireframe: true});
+    const cyan = new THREE.MeshBasicMaterial({color: 0xe4dcb4});
+    const glass = new THREE.MeshBasicMaterial({color: 0xb49343, transparent: true, opacity: .32, wireframe: true});
     const points = [
       new THREE.Vector2(.03, 0), new THREE.Vector2(.15, .2),
       new THREE.Vector2(.44, .48), new THREE.Vector2(.67, .82), new THREE.Vector2(.78, 1.12),
@@ -34,7 +34,7 @@ export default function VaultScene({ reduced }) {
       vault.add(rim);
     }
     const orbit = new THREE.Mesh(new THREE.TorusGeometry(1.65, .005, 6, 96),
-      new THREE.MeshBasicMaterial({ color: 0x174f55, transparent: true, opacity: .45 }));
+      new THREE.MeshBasicMaterial({ color: 0xe4dcb4, transparent: true, opacity: .45 }));
     orbit.rotation.set(1.19, .3, -.2);
     scene.add(orbit);
     const grainCount = 550;
@@ -45,7 +45,7 @@ export default function VaultScene({ reduced }) {
     }));
     const grainGeo = new THREE.BufferGeometry();
     grainGeo.setAttribute("position", new THREE.BufferAttribute(positions, 3));
-    vault.add(new THREE.Points(grainGeo, new THREE.PointsMaterial({color: 0xf96900, size: .042, transparent: true, opacity: .85})));
+    vault.add(new THREE.Points(grainGeo, new THREE.PointsMaterial({color: 0xf4b60b, size: .042, transparent: true, opacity: .85})));
     const observer = new ResizeObserver(() => {
       const { clientWidth: width, clientHeight: height } = host;
       if (!width || !height) return;

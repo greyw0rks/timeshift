@@ -26,10 +26,10 @@ TUSD is a six-decimal test token with an uncapped faucet and no monetary value. 
 
 ## Two-wallet demo
 
-1. Connect two testnet wallets using separate browser profiles. In each profile, open **Portfolio** and click **Get test tokens**.
+1. Connect two testnet wallets using separate browser profiles. In each profile, open **My Locks** and click **Get test tokens**.
 2. Wallet A creates a 100 TUSD lock using **1 minute (testnet demo)**, opens its Lock NFT from Portfolio and lists it for 92 TUSD.
 3. Wallet B opens the same lock by URL or through the marketplace and buys before maturity. Show the purchase receipt and the new owner on the detail page.
-4. Wallet A withdraws the 92 TUSD in Portfolio. Once the countdown ends, Wallet B opens the lock and redeems 100 TUSD. Show the redemption receipt.
+4. Wallet A withdraws the 92 TUSD in My Locks. Once the countdown ends, Wallet B opens the lock and redeems 100 TUSD. Show the redemption receipt.
 5. For a recording, rehearse the signing sequence and keep both browser profiles ready. The 60-second clock starts at the deposit receipt. Cut the recording between buy and redeem if needed.
 
 An 8 TUSD discount is 8% of the locked payout and an 8.69% holding-period gain on a 92 TUSD purchase, rounded down by the UI. The buyer's gain comes from the price paid by the seller for early liquidity. An early sale requires a buyer.
