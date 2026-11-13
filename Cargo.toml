@@ -1,0 +1,13 @@
+[workspace]
+members = ["contract", "token"]
+resolver = "2"
+
+[workspace.dependencies]
+near-sdk = "5.28"
+near-contract-standards = "5.28"
+
+[profile.release]
+opt-level = "z"
+lto = true
+panic = "abort"
+overflow-checks = true
